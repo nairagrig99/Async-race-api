@@ -5,14 +5,19 @@ import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
 import Garage from "./components/Garage/Garage.tsx";
 import App from "./App.tsx";
 import Winners from "./components/Winners.tsx";
+import {Provider} from "react-redux";
+import {store} from "./store/store.ts";
 
 export const router = createBrowserRouter([
     {
         path: '/',
         element: <App/>,
         children: [
-            {index: true, element: <Navigate to="/garage" replace />},
-            {path: 'garage', element: <Garage/>},
+            {index: true, element: <Navigate to="/garage" replace/>},
+            {
+                path: 'garage',
+                element: <Garage/>
+            },
             {path: 'winners', element: <Winners/>},
         ],
     },
@@ -20,6 +25,8 @@ export const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
-        <RouterProvider router={router}/>
+        <Provider store={store}>
+            <RouterProvider router={router}/>
+        </Provider>
     </StrictMode>,
 )

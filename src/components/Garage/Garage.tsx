@@ -1,5 +1,9 @@
+import CarModal from "./car-creation/CarModal.tsx";
+import CarPanel from "./car-race-panel/CarPanel.tsx";
+
 export default function Garage() {
     return <div>
-        this is a garage
+        <CarModal/>
+        <CarPanel/>
     </div>
 }
