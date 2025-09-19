@@ -1,10 +1,9 @@
 export default function CarSvg({color}: { color: string }) {
-    return <div>
+    return <div className="">
         <svg
             width="100px" height="100px" viewBox="0 0 512 512" id="svg3007"
             version="1.1" fill="#000000" transform="rotate(180)">
             <g id="SVGRepo_bgCarrier" strokeWidth="0"/>
-
             <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"/>
             <g id="SVGRepo_iconCarrier">
                 <defs id="defs3009"/>
@@ -21,8 +20,7 @@ export default function CarSvg({color}: { color: string }) {
                                   marker: 'none',
                                   visibility: 'visible',
                                   display: 'inline',
-                                  overflow: 'visible',
-                                  enableBackground: 'accumulate'
+                                  overflow: 'visible'
                               }}
                               transform="translate(0,540.36218)"/>
                         <path
@@ -38,8 +36,7 @@ export default function CarSvg({color}: { color: string }) {
                                 marker: 'none',
                                 visibility: 'visible',
                                 display: 'inline',
-                                overflow: 'visible',
-                                enableBackground: 'accumulate'
+                                overflow: 'visible'
                             }}/>
                     </g>
                 </g>

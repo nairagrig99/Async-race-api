@@ -1,26 +1,33 @@
 // src/store/slices/modalSlice.ts (make sure the path is correct)
-import {createSlice} from "@reduxjs/toolkit";
+import {createSlice, type PayloadAction} from "@reduxjs/toolkit";
 import type {ModalState} from "../interface/modal-state.ts";
+import {ButtonType} from "../enums/button-type.ts";
+import type {CarModelInterface} from "../interface/car-model.interface.ts";
 
 const initialState: ModalState = {
-    isOpen: false
+    isOpen: false,
+    mode: ButtonType.CREATE,
+    car: undefined
 };
 
 const modalSlice = createSlice({
     name: "carModal",
     initialState,
     reducers: {
-        openCarModal: (state) => {
+        openCarModal: (state, action: PayloadAction<{
+            mode: ButtonType.CREATE | ButtonType.EDIT;
+            car: CarModelInterface | undefined
+        }>) => {
             state.isOpen = true;
+            state.mode = action.payload.mode;
+            state.car = action.payload.car
         },
         closeCarModal: (state) => {
             state.isOpen = false;
-        },
-        toggleCarModal: (state) => {
-            state.isOpen = !state.isOpen;
+            state.car = undefined
         }
     }
 });
 
-export const {openCarModal, closeCarModal, toggleCarModal} = modalSlice.actions;
+export const {openCarModal, closeCarModal} = modalSlice.actions;
 export default modalSlice;

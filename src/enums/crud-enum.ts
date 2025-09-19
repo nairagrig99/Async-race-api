@@ -2,5 +2,6 @@ export enum CRUD {
     POST = "POST",
     UPDATE = "UPDATE",
     GET = "GET",
-    DELETE = "DELETE"
+    DELETE = "DELETE",
+    PATCH = "PATCH"
 }
