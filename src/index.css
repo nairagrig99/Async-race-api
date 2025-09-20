@@ -7,8 +7,8 @@
 }
 
 .race-car {
-    position: absolute;
-    left: 8%;
+    position: relative;
+    left: 0;
 }
 
 @keyframes moveRight {

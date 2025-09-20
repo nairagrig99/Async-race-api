@@ -17,16 +17,12 @@ export const createCar = createAsyncThunk('car/create', async ({form}: carFormSt
                 color: form.color
             })
         });
-
         if (!response.ok) {
             throw new Error(ErrorMessageEnum.FAILED_ADDING);
         }
-
         return response.json();
     }
 })
-
-
 
 export const getCars = createAsyncThunk('car/get', async () => {
     const response = await fetch(`${serverEnum.URL}/garage`)

@@ -4,22 +4,22 @@ import {openCarModal} from "../../../store/ModalSlide.ts";
 import type {AppDispatch} from "../../../store/store.ts";
 import {ButtonStyleEnum} from "../../../enums/style-enum.ts";
 import {ButtonType} from "../../../enums/button-type.ts";
-import {CAR_LIST} from "../../../enums/global-variables.ts";
+import {CAR_LIST, PAGE_END, PAGE_START, START} from "../../../enums/global-variables.ts";
 import {createCar} from "../../../services/Service.ts";
+import type {racingState} from "../../../interface/racing-state.ts";
 
-type racingState = {
-    carListRace: HTMLDivElement[]
-}
 export default function CarModal({carListRace}: racingState) {
 
     const dispatch = useDispatch<AppDispatch>();
 
     const createRandomCars = () => {
+        console.log('paginate')
         const carList = [];
-        for (let i = 0; i < 100; i++) {
-            const randomIndex = Math.floor(Math.random() * CAR_LIST.length - 1) + 1;
+        for (let i = START; i < PAGE_END; i++) {
+            const randomIndex = Math.floor(Math.random() * CAR_LIST.length - PAGE_START) + PAGE_START;
             carList.push(CAR_LIST[randomIndex]);
         }
+
         carList.forEach(car => {
             dispatch(createCar({form: car}));
         });
@@ -31,13 +31,14 @@ export default function CarModal({carListRace}: racingState) {
                 const minDuration = 2;
                 const maxDuration = 10;
                 const randomDuration = Math.floor(Math.random() * (maxDuration - minDuration + 1)) + minDuration;
+                (el.querySelector(".race-car") as HTMLElement).style.position = "absolute";
                 (el.querySelector(".race-car") as HTMLElement).style.animation = `moveRight ${randomDuration}s linear forwards`;
             }
-
         })
     }
     const resetRacing = () => {
         carListRace.forEach((el: HTMLElement) => {
+            (el.querySelector(".race-car") as HTMLElement).style.position = "relative";
             (el.querySelector(".race-car") as HTMLElement).style.animation = `none`;
         })
     }

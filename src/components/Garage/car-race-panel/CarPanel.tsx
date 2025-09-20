@@ -6,6 +6,7 @@ import {useEffect, useRef, useState} from "react";
 import type {CarModelInterface} from "../../../interface/car-model.interface.ts";
 import {Pagination} from "../../../enums/pagination.ts";
 import PaginationPanel from "./PaginationPanel.tsx";
+import {PAGE_LIMIT, PAGE_START} from "../../../enums/global-variables.ts";
 
 type racingState = {
     racingPanel: (paginatedCar: HTMLDivElement[]) => void
@@ -13,30 +14,31 @@ type racingState = {
 
 export default function CarPanel({racingPanel}: racingState) {
     const carsRef = useRef<HTMLDivElement[]>([]);
-
     const getCarList = useSelector((state: RootState) => state.carSlice.car);
-
     const [carList, setCarList] = useState<CarModelInterface[]>([]);
-    const [page, setPage] = useState<number>(1);
-
-    const numOfPerPage: number = 7;
+    const [page, setPage] = useState<number>(PAGE_START);
     const garageLength: number = getCarList.length;
 
     const pagination = (direction: string) => {
-        if (direction === Pagination.NEXT && page * numOfPerPage < getCarList.length) {
-            setPage(prevState => prevState + 1)
-        } else if (direction === Pagination.PREV && page > 1) {
-            setPage(prevState => prevState - 1);
+        if (direction === Pagination.NEXT && page * PAGE_LIMIT < getCarList.length) {
+            setPage(prevState => prevState + PAGE_START)
+        } else if (direction === Pagination.PREV && page > PAGE_START) {
+            setPage(prevState => prevState - PAGE_START);
         }
     }
 
     useEffect(() => {
-        const start = (page - 1) * numOfPerPage;
-        const end = start + numOfPerPage;
+        console.log('this effect work ')
+        const start = (page - PAGE_START) * PAGE_LIMIT;
+        const end = start + PAGE_LIMIT;
         const paginatedCarList = getCarList.slice(start, end)
         setCarList(paginatedCarList);
-        racingPanel(carsRef.current);
     }, [getCarList, page]);
+
+    useEffect(() => {
+        racingPanel(carsRef.current);
+    }, [carList]);
+
 
     return <div className="border border-solid border-r-0">
         <div className="flex border border-solid  border-r-0 pl-2.5 relative">
@@ -89,7 +91,6 @@ export default function CarPanel({racingPanel}: racingState) {
                 }
             </div>
         </div>
-
         <PaginationPanel garageLength={garageLength} page={page} pagination={pagination}/>
     </div>
 
