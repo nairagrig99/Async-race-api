@@ -25,9 +25,10 @@ export default function CarControlEvents({car}: { car: CarModelInterface }) {
                     className={ButtonStyleEnum.DELETE_BUTTON}
                     value={ButtonType.DELETE}/>
         </div>
+
         <div>
-            <Button value={ButtonType.START}/>
-            <Button value={ButtonType.STOP}/>
+            <Button className={ButtonStyleEnum.START_BUTTON} value={ButtonType.START}/>
+            <Button className={ButtonStyleEnum.FINISH_BUTTON} value={ButtonType.STOP}/>
         </div>
     </div>
 }

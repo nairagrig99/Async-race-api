@@ -3,6 +3,11 @@ export const FORM_INITIAL_STATE = {
     name: '',
     color: DEFAULT_COLOR
 }
+
+export const START = 0;
+export const PAGE_START = 1;
+export const PAGE_END = 100;
+export const PAGE_LIMIT = 7;
 export const CAR_LIST = [
     {
         name: "Tesla",
