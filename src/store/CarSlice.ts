@@ -34,7 +34,6 @@ const carSlice = createSlice({
             state.error = null
         })
         builder.addCase(getCars.fulfilled, (state, action) => {
-            // console.log('action.payload', action.payload)
             state.loading = false;
             state.car = action.payload;
         })

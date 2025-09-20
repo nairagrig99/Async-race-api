@@ -1,7 +1,7 @@
 export default function CarSvg({color}: { color: string }) {
-    return <div className="">
+    return <div className="race-car">
         <svg
-            width="100px" height="100px" viewBox="0 0 512 512" id="svg3007"
+            width="70px" height="70px" viewBox="0 0 512 512" id="svg3007"
             version="1.1" fill="#000000" transform="rotate(180)">
             <g id="SVGRepo_bgCarrier" strokeWidth="0"/>
             <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"/>
