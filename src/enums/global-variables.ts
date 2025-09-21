@@ -8,6 +8,9 @@ export const START = 0;
 export const PAGE_START = 1;
 export const PAGE_END = 100;
 export const PAGE_LIMIT = 7;
+
+export const MIN_DURATION = 2;
+export const MAX_DURATION = 10;
 export const CAR_LIST = [
     {
         name: "Tesla",
