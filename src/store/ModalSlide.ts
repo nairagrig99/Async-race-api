@@ -1,4 +1,3 @@
-// src/store/slices/modalSlice.ts (make sure the path is correct)
 import {createSlice, type PayloadAction} from "@reduxjs/toolkit";
 import type {ModalState} from "../interface/modal-state.ts";
 import {ButtonType} from "../enums/button-type.ts";

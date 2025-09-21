@@ -28,7 +28,6 @@ export default function CarPanel({racingPanel}: racingState) {
     }
 
     useEffect(() => {
-        console.log('this effect work ')
         const start = (page - PAGE_START) * PAGE_LIMIT;
         const end = start + PAGE_LIMIT;
         const paginatedCarList = getCarList.slice(start, end)
@@ -41,11 +40,11 @@ export default function CarPanel({racingPanel}: racingState) {
 
 
     return <div className="border border-solid border-r-0">
-        <div className="flex border border-solid  border-r-0 pl-2.5 relative">
+        <div className="flex border border-solid  border-r-0 pl-2.5 relative pt-2.5">
             <div>
                 {carList.length > 0 &&
                     carList.map((car) =>
-                        <div key={car.id} className="w-fit">
+                        <div key={car.id} className="w-[166px]">
                             <div className="flex gap-2 items-center ">
                                 <CarControlEvents car={car}/>
                                 <div

@@ -1,19 +1,28 @@
 import Button from "../../../UI/Button.tsx";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {openCarModal} from "../../../store/ModalSlide.ts";
-import type {AppDispatch} from "../../../store/store.ts";
+import type {AppDispatch, RootState} from "../../../store/store.ts";
 import {ButtonStyleEnum} from "../../../enums/style-enum.ts";
 import {ButtonType} from "../../../enums/button-type.ts";
-import {CAR_LIST, PAGE_END, PAGE_START, START} from "../../../enums/global-variables.ts";
+import {CAR_LIST, MAX_DURATION, MIN_DURATION, PAGE_END, PAGE_START, START} from "../../../enums/global-variables.ts";
 import {createCar} from "../../../services/Service.ts";
 import type {racingState} from "../../../interface/racing-state.ts";
+import {useEffect} from "react";
 
 export default function CarModal({carListRace}: racingState) {
 
     const dispatch = useDispatch<AppDispatch>();
+    const selector = useSelector((state: RootState) => state.carRaceStartSlice);
+
+    useEffect(() => {
+        if (selector.mode === ButtonType.START) {
+            racing(carListRace[selector.id])
+        } else {
+            stopRacing(carListRace[selector.id])
+        }
+    }, [selector.id,selector.mode,carListRace]);
 
     const createRandomCars = () => {
-        console.log('paginate')
         const carList = [];
         for (let i = START; i < PAGE_END; i++) {
             const randomIndex = Math.floor(Math.random() * CAR_LIST.length - PAGE_START) + PAGE_START;
@@ -27,20 +36,28 @@ export default function CarModal({carListRace}: racingState) {
 
     const startRacing = () => {
         carListRace.forEach((el: HTMLElement) => {
-            if (el != null) {
-                const minDuration = 2;
-                const maxDuration = 10;
-                const randomDuration = Math.floor(Math.random() * (maxDuration - minDuration + 1)) + minDuration;
-                (el.querySelector(".race-car") as HTMLElement).style.position = "absolute";
-                (el.querySelector(".race-car") as HTMLElement).style.animation = `moveRight ${randomDuration}s linear forwards`;
-            }
+            racing(el)
         })
     }
     const resetRacing = () => {
         carListRace.forEach((el: HTMLElement) => {
+            stopRacing(el)
+        })
+    }
+
+    const racing = (el: HTMLElement) => {
+        if (el){
+            const randomDuration = Math.floor(Math.random() * (MAX_DURATION - MIN_DURATION + 1)) + MIN_DURATION;
+            (el.querySelector(".race-car") as HTMLElement).style.position = "absolute";
+            (el.querySelector(".race-car") as HTMLElement).style.animation = `moveRight ${randomDuration}s linear forwards`;
+        }
+
+    }
+    const stopRacing = (el: HTMLElement) => {
+        if(el){
             (el.querySelector(".race-car") as HTMLElement).style.position = "relative";
             (el.querySelector(".race-car") as HTMLElement).style.animation = `none`;
-        })
+        }
     }
 
     return <div className="border-b border-solid pb-[30px] flex justify-between">
