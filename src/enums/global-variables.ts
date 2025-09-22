@@ -11,6 +11,8 @@ export const PAGE_LIMIT = 7;
 
 export const MIN_DURATION = 2;
 export const MAX_DURATION = 10;
+
+
 export const CAR_LIST = [
     {
         name: "Tesla",

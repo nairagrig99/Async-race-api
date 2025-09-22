@@ -38,7 +38,6 @@ export default function CarPanel({racingPanel}: racingState) {
         racingPanel(carsRef.current);
     }, [carList]);
 
-
     return <div className="border border-solid border-r-0">
         <div className="flex border border-solid  border-r-0 pl-2.5 relative pt-2.5">
             <div>
