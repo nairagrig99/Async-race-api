@@ -3,7 +3,6 @@ import CarPanel from "./car-race-panel/CarPanel.tsx";
 import {useDispatch} from "react-redux";
 import type {AppDispatch} from "../../store/store.ts";
 import {useEffect, useState} from "react";
-import {getCars} from "../../services/GarageService.ts";
 import Modal from "../../UI/Modal.tsx";
 import {getWinners} from "../../services/WinnersService.ts";
 import WinnerModal from "../../UI/WinnerModal.tsx";
@@ -13,14 +12,12 @@ export default function Garage() {
     const [carListRace, setCarListRace] = useState<HTMLDivElement[]>([])
 
     useEffect(() => {
-        dispatch(getCars())
         dispatch(getWinners())
     }, [dispatch]);
     const carListForRacing = (carList: HTMLDivElement[]) => {
-        if (carList.length){
+        if (carList.length) {
             setCarListRace(carList);
         }
-
     }
 
     return <div>

@@ -1,5 +1,5 @@
 export interface WinnerModel {
-    id?: number,
+    id: number,
     time: number,
     wins: number,
     name?: string
