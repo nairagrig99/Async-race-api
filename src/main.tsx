@@ -4,7 +4,7 @@ import './index.css'
 import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
 import Garage from "./components/Garage/Garage.tsx";
 import App from "./App.tsx";
-import Winners from "./components/Winners.tsx";
+import Winners from "./components/Winners/Winners.tsx";
 import {Provider} from "react-redux";
 import {store} from "./store/store.ts";
 

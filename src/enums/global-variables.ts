@@ -1,3 +1,5 @@
+export const TABLE_TH="px-4 py-2 border-b text-left";
+export const TABLE_TD="px-4 py-2 border-b";
 export const DEFAULT_COLOR = '#000000';
 export const FORM_INITIAL_STATE = {
     name: '',
@@ -11,6 +13,8 @@ export const PAGE_LIMIT = 7;
 
 export const MIN_DURATION = 2;
 export const MAX_DURATION = 10;
+export const MAX_TIME = 1100;
+export const MAX_TIME_HIDDEN = 5000;
 
 
 export const CAR_LIST = [

@@ -4,7 +4,15 @@ import {openCarModal} from "../../../store/ModalSlide.ts";
 import type {AppDispatch, RootState} from "../../../store/store.ts";
 import {ButtonStyleEnum} from "../../../enums/style-enum.ts";
 import {ButtonType} from "../../../enums/button-type.ts";
-import {CAR_LIST, MAX_DURATION, MIN_DURATION, PAGE_END, PAGE_START, START} from "../../../enums/global-variables.ts";
+import {
+    CAR_LIST,
+    MAX_DURATION,
+    MAX_TIME, MAX_TIME_HIDDEN,
+    MIN_DURATION,
+    PAGE_END,
+    PAGE_START,
+    START
+} from "../../../enums/global-variables.ts";
 import {createCar} from "../../../services/GarageService.ts";
 import type {racingState} from "../../../interface/racing-state.ts";
 import {useEffect} from "react";
@@ -86,7 +94,7 @@ export default function CarModal({carListRace}: racingState) {
                             time: randomDuration,
                             wins: 1
                         });
-                    }, randomDuration * 1000 + 100);
+                    }, randomDuration * MAX_TIME);
                 }
             } else {
                 resolve(null);
@@ -111,7 +119,7 @@ export default function CarModal({carListRace}: racingState) {
             if (randomDuration) {
                 handleWinnerFetch(raceResult)
             }
-        }, randomDuration * 1000)
+        }, randomDuration * MAX_TIME)
     }
 
     const handleWinnerFetch = (winner: WinnerModel) => {
@@ -148,7 +156,7 @@ export default function CarModal({carListRace}: racingState) {
 
         setTimeout(() => {
             dispatch(hideWinnerModal())
-        }, 5000)
+        }, MAX_TIME_HIDDEN)
 
     }
     const stopRacing = (el: HTMLElement) => {
@@ -178,7 +186,7 @@ export default function CarModal({carListRace}: racingState) {
 
         <Button className={ButtonStyleEnum.CREATE_BUTTON}
                 onClick={() => createRandomCars()}
-                value={ButtonType.PAGINATE}/>
+                value={ButtonType.GENERATE_CARS}/>
 
     </div>
 }
