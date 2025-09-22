@@ -5,7 +5,7 @@ import {openCarModal} from "../../../store/ModalSlide.ts";
 import type {CarModelInterface} from "../../../interface/car-model.interface.ts";
 import {useDispatch} from "react-redux";
 import type {AppDispatch} from "../../../store/store.ts";
-import {removeCar} from "../../../services/Service.ts";
+import {removeCar} from "../../../services/GarageService.ts";
 import {startCarRacing, stopCarRacing} from "../../../store/UniqCarRaceStart.ts";
 import {useState} from "react";
 

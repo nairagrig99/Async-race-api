@@ -1,13 +1,13 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import type {carFormState} from "../interface/car-form-state.interface.ts";
 import {CRUD} from "../enums/crud-enum.ts";
-import {serverEnum} from "../enums/request-url.enum.ts";
+import {ServerEnum} from "../enums/request-url.enum.ts";
 import {ErrorMessageEnum} from "../enums/error-message.enum.ts";
 import type {CarModelInterface} from "../interface/car-model.interface.ts";
 
 export const createCar = createAsyncThunk('car/create', async ({form}: carFormState) => {
     if (form) {
-        const response = await fetch(`${serverEnum.URL}/garage`, {
+        const response = await fetch(`${ServerEnum.URL}/garage`, {
             method: CRUD.POST,
             headers: {
                 'Content-Type': 'application/json'
@@ -25,7 +25,7 @@ export const createCar = createAsyncThunk('car/create', async ({form}: carFormSt
 })
 
 export const getCars = createAsyncThunk('car/get', async () => {
-    const response = await fetch(`${serverEnum.URL}/garage`)
+    const response = await fetch(`${ServerEnum.URL}/garage`)
     if (!response.ok) {
         throw new Error(ErrorMessageEnum.FAILED_GETTING);
     }
@@ -36,7 +36,7 @@ export const editCar = createAsyncThunk('car/update', async ({id, updates}: {
     id: number,
     updates: CarModelInterface
 }) => {
-    const response = await fetch(`${serverEnum.URL}/garage/${id}`, {
+    const response = await fetch(`${ServerEnum.URL}/garage/${id}`, {
         method: CRUD.PATCH,
         headers: {
             "Content-Type": "application/json"
@@ -53,7 +53,7 @@ export const editCar = createAsyncThunk('car/update', async ({id, updates}: {
 export const removeCar = createAsyncThunk('car/remove', async ({id}: {
     id: number
 }) => {
-    const response = await fetch(`${serverEnum.URL}/garage/${id}`, {
+    const response = await fetch(`${ServerEnum.URL}/garage/${id}`, {
         method: CRUD.DELETE,
     })
     if (!response.ok) {

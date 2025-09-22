@@ -1,6 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit";
 import type {CarState} from "../interface/car-state.interface.ts";
-import {createCar, editCar, getCars, removeCar} from "../services/Service.ts";
+import {createCar, editCar, getCars, removeCar} from "../services/GarageService.ts";
 import {ErrorMessageEnum} from "../enums/error-message.enum.ts";
 
 const initialState: CarState = {

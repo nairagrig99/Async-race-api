@@ -9,7 +9,7 @@ import {DEFAULT_COLOR, FORM_INITIAL_STATE} from "../enums/global-variables.ts";
 import Button from "./Button.tsx";
 import {ButtonStyleEnum} from "../enums/style-enum.ts";
 import {ButtonType} from "../enums/button-type.ts";
-import {createCar, editCar} from "../services/Service.ts";
+import {createCar, editCar} from "../services/GarageService.ts";
 import type {CarModelInterface} from "../interface/car-model.interface.ts";
 import {ErrorMessageEnum} from "../enums/error-message.enum.ts";
 
@@ -65,16 +65,14 @@ export default function Modal() {
     }, [mode, car]);
 
     if (!isOpen) return null;
-    const closeModal = () => {
-        dispatch(closeCarModal())
-    }
+
     const handleInputChange = (inputName: string, value: string) => {
         setForm((prev) => ({...prev, [inputName]: value}))
     }
     const handleEvent = () => {
         if (mode === ButtonType.EDIT && car) {
             if (car.id != undefined) {
-                dispatchForm(ButtonType.EDIT, {id: car.id, name: form.name, color: form.color},car)
+                dispatchForm(ButtonType.EDIT, {id: car.id, name: form.name, color: form.color}, car)
             }
         } else {
             dispatchForm(ButtonType.CREATE, form);
@@ -140,6 +138,6 @@ export default function Modal() {
                 </div>
             </div>
         </div>
-        <CloseSvg onClick={closeModal}/>
+        <CloseSvg onClick={() => dispatch(closeCarModal())}/>
     </dialog>
 }

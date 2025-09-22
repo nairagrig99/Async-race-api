@@ -1,3 +1,3 @@
-export enum serverEnum {
+export enum ServerEnum {
     URL = "http://127.0.0.1:3000"
 }
