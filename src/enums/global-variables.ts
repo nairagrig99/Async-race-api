@@ -13,8 +13,8 @@ export const PAGE_LIMIT = 7;
 
 export const MIN_DURATION = 2;
 export const MAX_DURATION = 10;
-export const MAX_TIME = 1100;
-export const MAX_TIME_HIDDEN = 5000;
+export const MAX_TIME = 1000;
+export const MAX_TIME_HIDDEN = 3000;
 
 
 export const CAR_LIST = [
@@ -32,7 +32,7 @@ export const CAR_LIST = [
     },
     {
         name: "Ford",
-        color: "#ef3c40",
+        color: "#b6a767",
 
     }, {
         name: "Audi",
@@ -40,7 +40,7 @@ export const CAR_LIST = [
 
     }, {
         name: "Lamborghini",
-        color: "#ef3c40",
+        color: "#1e2e6c",
 
     }, {
         name: "Toyota",
@@ -52,11 +52,11 @@ export const CAR_LIST = [
 
     }, {
         name: "Volkswagen",
-        color: "#ef3c40",
+        color: "#422324",
 
     }, {
         name: "Hyundai Tucson",
-        color: "#ef3c40",
+        color: "#30a150",
 
     }
 ]

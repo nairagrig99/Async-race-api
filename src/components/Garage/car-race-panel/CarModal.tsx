@@ -28,17 +28,24 @@ export default function CarModal({carListRace}: racingState) {
     const carList = useSelector((state: RootState) => state.carSlice.car);
 
     useEffect(() => {
-        if (selector.mode === ButtonType.START) {
-            uniqueCarRacing(carListRace[selector.id], selector.id)
-        } else {
-            stopRacing(carListRace[selector.id])
+        const carElement = carListRace.find(element =>
+            element && element.dataset.id === selector.id.toString()
+        );
+
+        if (carElement) {
+            if (selector.mode === ButtonType.START) {
+                const elementIndex = carListRace.indexOf(carElement);
+                uniqueCarRacing(carElement, elementIndex);
+            } else {
+                stopRacing(carElement);
+            }
         }
     }, [selector.id, selector.mode]);
 
     const createRandomCars = () => {
         const carList = [];
         for (let i = START; i < PAGE_END; i++) {
-            const randomIndex = +(Math.floor(Math.random() * CAR_LIST.length - PAGE_START) + PAGE_START).toFixed(2);
+            const randomIndex = Math.floor(Math.random() * CAR_LIST.length - PAGE_START) + PAGE_START;
             carList.push(CAR_LIST[randomIndex]);
         }
 
@@ -49,11 +56,11 @@ export default function CarModal({carListRace}: racingState) {
 
     const racingMode = (mode: string) => {
         if (mode === ButtonType.RACE) {
-
-            const racePromises = carListRace.map((el: HTMLElement, index) =>
-                startRace(el, index)
+            const racePromises = carListRace.map((el: HTMLElement) => {
+                    const id = Number(el.dataset.id);
+                    return startRace(el, id)
+                }
             );
-
             Promise.all(racePromises).then((results) => {
                 const validResults = results.filter(result => result !== null);
                 if (validResults.length > 0) {
@@ -94,7 +101,7 @@ export default function CarModal({carListRace}: racingState) {
                             time: randomDuration,
                             wins: 1
                         });
-                    }, randomDuration * MAX_TIME);
+                    }, randomDuration * MAX_TIME + 100);
                 }
             } else {
                 resolve(null);
@@ -104,22 +111,24 @@ export default function CarModal({carListRace}: racingState) {
 
     const uniqueCarRacing = (el: HTMLElement, index: number) => {
         const randomDuration = +(Math.random() * (MAX_DURATION - MIN_DURATION) + MIN_DURATION);
-
+        console.log('el', el)
         if (el) {
             (el.querySelector(".race-car") as HTMLElement).style.position = "absolute";
             (el.querySelector(".race-car") as HTMLElement).style.animation = `moveRight ${randomDuration}s linear forwards`;
-        }
-        const raceResult: WinnerModel = {
-            id: index,
-            time: randomDuration,
-            wins: 1
-        }
 
-        setTimeout(() => {
-            if (randomDuration) {
-                handleWinnerFetch(raceResult)
+
+            const raceResult: WinnerModel = {
+                id: index + 1,
+                time: randomDuration,
+                wins: 1
             }
-        }, randomDuration * MAX_TIME)
+
+            setTimeout(() => {
+                if (randomDuration) {
+                    handleWinnerFetch(raceResult)
+                }
+            }, randomDuration * MAX_TIME)
+        }
     }
 
     const handleWinnerFetch = (winner: WinnerModel) => {
