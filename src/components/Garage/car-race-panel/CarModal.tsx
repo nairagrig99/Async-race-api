@@ -193,6 +193,7 @@ export default function CarModal({carListRace}: racingState) {
                 onClick={() => dispatch(openCarModal({mode: ButtonType.CREATE, car: undefined}))}
                 value={ButtonType.CREATE}/>
 
+
         <Button className={ButtonStyleEnum.GENERATE_BUTTON}
                 onClick={() => createRandomCars()}
                 value={ButtonType.GENERATE_CARS}/>
