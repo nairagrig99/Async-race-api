@@ -184,7 +184,7 @@ export default function CarModal({carListRace}: racingState) {
                     onClick={() => racingMode(ButtonType.RACE)}
                     value={ButtonType.RACE}/>
 
-            <Button className={ButtonStyleEnum.CREATE_BUTTON}
+            <Button className={ButtonStyleEnum.CANCEL_BUTTON}
                     onClick={() => racingMode(ButtonType.RESET)}
                     value={ButtonType.RESET}/>
         </div>
@@ -193,7 +193,7 @@ export default function CarModal({carListRace}: racingState) {
                 onClick={() => dispatch(openCarModal({mode: ButtonType.CREATE, car: undefined}))}
                 value={ButtonType.CREATE}/>
 
-        <Button className={ButtonStyleEnum.CREATE_BUTTON}
+        <Button className={ButtonStyleEnum.GENERATE_BUTTON}
                 onClick={() => createRandomCars()}
                 value={ButtonType.GENERATE_CARS}/>
 

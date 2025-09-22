@@ -95,7 +95,7 @@ export default function CarPanel({racingPanel}: racingState) {
                 }
             </div>
         </div>
-        <PaginationPanel garageLength={garageLength} page={page} pagination={pagination}/>
+        <PaginationPanel garageLength={garageLength} page={page} pagination={pagination} paginationName='Garage'/>
     </div>
 
 }
