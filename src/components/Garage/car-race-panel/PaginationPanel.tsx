@@ -3,10 +3,10 @@ import {Pagination} from "../../../enums/pagination.ts";
 import NextSvg from "../../../UI/NextSvg.tsx";
 import type {PaginationState} from "../../../interface/pagination-state.ts";
 
-export default function PaginationPanel({garageLength, page, pagination}: PaginationState) {
+export default function PaginationPanel({garageLength, page, pagination,paginationName}: PaginationState) {
     return <div className="flex justify-between mt-5">
         <div>
-            <b>GARAGE ({garageLength})</b>
+            <b>{paginationName} ({garageLength})</b>
         </div>
         <div className="flex gap-2.5">
             <PrevSvg onClick={() => pagination(Pagination.PREV)}/>
