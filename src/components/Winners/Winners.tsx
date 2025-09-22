@@ -12,7 +12,7 @@ export default function Winners() {
     }, [dispatch])
 
     return <div>
-        <h2>WINNERS</h2>
+        <h2 className="text-[45px]">WINNERS</h2>
         <WinnersTable/>
     </div>
 }

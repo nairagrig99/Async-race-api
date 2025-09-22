@@ -21,6 +21,7 @@ export default function Garage() {
     }
 
     return <div>
+        <h3 className="text-[45px] mb-3">GARAGE</h3>
         <CarModal carListRace={carListRace}/>
         <CarPanel racingPanel={carListForRacing}/>
         <Modal></Modal>

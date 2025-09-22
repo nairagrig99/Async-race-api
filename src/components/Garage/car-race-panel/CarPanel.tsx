@@ -48,11 +48,17 @@ export default function CarPanel({racingPanel}: racingState) {
                                 <CarControlEvents car={car}/>
                                 <div
                                     key={car.id}
+                                    data-id={car.id}
                                     ref={(element) => {
-                                        if (car.id && element != null) {
-                                            carsRef.current[car.id] = element as HTMLDivElement;
+                                        if (element != null) {
+                                            const index = carList.findIndex(c => c.id === car.id);
+                                            if (index !== -1) {
+                                                carsRef.current[index] = element as HTMLDivElement;
+                                            }
                                         }
-                                    }} className="w-[70px] h-[70px]">
+                                    }}
+
+                                    className="w-[70px] h-[70px]">
                                     <CarSvg color={car.color}/>
                                 </div>
 
