@@ -16,6 +16,6 @@
         left: 10%;
     }
     to {
-        left: calc(100% - 35px);;
+        left: calc(100% - 30px);;
     }
 }
