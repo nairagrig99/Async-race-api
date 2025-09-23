@@ -8,20 +8,22 @@ import Winners from "./components/Winners/Winners.tsx";
 import {Provider} from "react-redux";
 import {store} from "./store/store.ts";
 
-export const router = createBrowserRouter([
+export const router = createBrowserRouter(
+    [
+        {
+            path: '/',
+            element: <App />,
+            children: [
+                { index: true, element: <Navigate to="/garage" replace /> },
+                { path: 'garage', element: <Garage /> },
+                { path: 'winners', element: <Winners /> },
+            ],
+        },
+    ],
     {
-        path: '/',
-        element: <App/>,
-        children: [
-            {index: true, element: <Navigate to="/garage" replace/>},
-            {
-                path: 'garage',
-                element: <Garage/>
-            },
-            {path: 'winners', element: <Winners/>},
-        ],
-    },
-])
+        basename: '/Async-race-api',
+    }
+);
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
