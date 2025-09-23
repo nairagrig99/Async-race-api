@@ -21,13 +21,6 @@ export default function Modal() {
     const {isOpen, mode, car} = useSelector((state: RootState) => state.modalSlice);
     const [form, setForm] = useState<CarModelInterface>(FORM_INITIAL_STATE);
 
-
-    // useEffect(() => {
-    //     if (responseError) {
-    //         setError(responseError);
-    //     }
-    // }, [responseError]);
-
     useEffect(() => {
         if (!isOpen) {
             setForm(FORM_INITIAL_STATE);
@@ -72,6 +65,7 @@ export default function Modal() {
     const handleEvent = () => {
         if (mode === ButtonType.EDIT && car) {
             if (car.id != undefined) {
+                if (!validation()) return
                 dispatchForm(ButtonType.EDIT, {id: car.id, name: form.name, color: form.color}, car)
             }
         } else {
@@ -80,11 +74,7 @@ export default function Modal() {
     }
 
     const dispatchForm = (requestType: string, form: CarModelInterface, car?: CarModelInterface | undefined) => {
-
-        if (form.name === '' && form.color === '') {
-            setError(ErrorMessageEnum.FIELD_REQUIRED)
-            return;
-        }
+        if (!validation()) return
 
         const request = requestType === ButtonType.EDIT && car != undefined && car.id != undefined ?
             dispatch(editCar({
@@ -98,7 +88,13 @@ export default function Modal() {
             setError(ErrorMessageEnum.SERVER_RESPONSE)
         })
     }
-
+    const validation = () => {
+        if (form.name === '' || form.color === '') {
+            setError(ErrorMessageEnum.FIELD_REQUIRED)
+            return false;
+        }
+        return true;
+    }
     return <dialog
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
         ref={dialog}
@@ -110,7 +106,7 @@ export default function Modal() {
                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                handleInputChange(CarEnum.NAME, event.target.value)
                            }}
-                           className="border border-solid px-4 py-2.5 rounded mb-2.5"
+                           className="border border-solid px-4 py-2.5 rounded mb-2.5 flex flex-col"
                            label="Car Name"
                            errors={error}
                            name="name"

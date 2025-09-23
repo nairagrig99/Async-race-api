@@ -15,7 +15,7 @@ import {
 } from "../../../enums/global-variables.ts";
 import {createCar} from "../../../services/GarageService.ts";
 import type {racingState} from "../../../interface/racing-state.ts";
-import {useEffect} from "react";
+import {useEffect, useRef} from "react";
 import type {WinnerModel} from "../../../interface/winner-interface.ts";
 import {setWinners, updateWinners} from "../../../services/WinnersService.ts";
 import {hideWinnerModal, showWinnerModal} from "../../../store/WinnerModal.ts";
@@ -26,6 +26,7 @@ export default function CarModal({carListRace}: racingState) {
     const selector = useSelector((state: RootState) => state.carRaceStartSlice);
     const winners = useSelector((state: RootState) => state.winnerSlice.winners);
     const carList = useSelector((state: RootState) => state.carSlice.car);
+    const timeOutRef = useRef<Set<number>>(new Set());
 
     useEffect(() => {
         const carElement = carListRace.find(element =>
@@ -37,6 +38,7 @@ export default function CarModal({carListRace}: racingState) {
                 const elementIndex = carListRace.indexOf(carElement);
                 uniqueCarRacing(carElement, elementIndex);
             } else {
+                removeAllTimeouts();
                 stopRacing(carElement);
             }
         }
@@ -69,10 +71,18 @@ export default function CarModal({carListRace}: racingState) {
                 }
             });
         } else {
+            removeAllTimeouts()
             carListRace.forEach((el: HTMLElement) => {
                 stopRacing(el);
             });
         }
+    }
+
+    const removeAllTimeouts = () => {
+        timeOutRef.current.forEach((timeout) => {
+            clearTimeout(timeout);
+        })
+        timeOutRef.current.clear()
     }
 
     const startRace = (el: HTMLElement, index: number): Promise<WinnerModel | null> => {
@@ -94,7 +104,7 @@ export default function CarModal({carListRace}: racingState) {
 
                     carElement.addEventListener('animationend', handleAnimationEnd);
 
-                    setTimeout(() => {
+                    const timeout = setTimeout(() => {
                         carElement.removeEventListener('animationend', handleAnimationEnd);
                         resolve({
                             id: index,
@@ -102,6 +112,7 @@ export default function CarModal({carListRace}: racingState) {
                             wins: 1
                         });
                     }, randomDuration * MAX_TIME + 100);
+                    timeOutRef.current.add(timeout)
                 }
             } else {
                 resolve(null);
@@ -111,7 +122,7 @@ export default function CarModal({carListRace}: racingState) {
 
     const uniqueCarRacing = (el: HTMLElement, index: number) => {
         const randomDuration = +(Math.random() * (MAX_DURATION - MIN_DURATION) + MIN_DURATION);
-        console.log('el', el)
+
         if (el) {
             (el.querySelector(".race-car") as HTMLElement).style.position = "absolute";
             (el.querySelector(".race-car") as HTMLElement).style.animation = `moveRight ${randomDuration}s linear forwards`;
@@ -123,11 +134,12 @@ export default function CarModal({carListRace}: racingState) {
                 wins: 1
             }
 
-            setTimeout(() => {
+            const timeout = setTimeout(() => {
                 if (randomDuration) {
                     handleWinnerFetch(raceResult)
                 }
             }, randomDuration * MAX_TIME)
+            timeOutRef.current.add(timeout)
         }
     }
 
@@ -163,9 +175,11 @@ export default function CarModal({carListRace}: racingState) {
             dispatch(showWinnerModal(winner))
         }
 
-        setTimeout(() => {
+        const timeout = setTimeout(() => {
             dispatch(hideWinnerModal())
         }, MAX_TIME_HIDDEN)
+
+        timeOutRef.current.add(timeout)
 
     }
     const stopRacing = (el: HTMLElement) => {
