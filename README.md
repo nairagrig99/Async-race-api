@@ -1,5 +1,5 @@
 
-**Deployed at: https://nairagrig99.github.io/Async-race-api/garage**
+**Deployed at: https://nairagrig99.github.io/Async-race-api**
 
 **Score: 350/400**
 
