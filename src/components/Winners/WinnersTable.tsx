@@ -7,6 +7,7 @@ import type {WinnerModel} from "../../interface/winner-interface.ts";
 import {TABLE_TD, TABLE_TH, PAGE_LIMIT, PAGE_START} from "../../enums/global-variables.ts";
 import {Pagination} from "../../enums/pagination.ts";
 import PaginationPanel from "../Garage/car-race-panel/PaginationPanel.tsx";
+import {SortEnum} from "../../enums/sort-enum.ts";
 
 type WinnerWithCar = WinnerModel & CarModelInterface;
 
@@ -21,8 +22,8 @@ export default function WinnersTable() {
     useEffect(() => {
         if (carList.length && selectWinners.length) {
             const updateWinnersList = selectWinners.map((el) => {
-                const carColor = carList[el.id].color;
-                const carName = carList[el.id].name;
+                const carColor = carList[el.id]?.color;
+                const carName = carList[el.id]?.name;
                 return {
                     ...el,
                     color: carColor,
@@ -49,17 +50,34 @@ export default function WinnersTable() {
     };
 
     const winnersLength = winners.length;
-
+    const SortBy = (mode: string) => {
+        if (mode === SortEnum.TIME) {
+            setPaginatedWinners((prev) => {
+                return [...prev].sort((a, b) => a.time - b.time);
+            })
+        } else {
+            setPaginatedWinners((prev) => {
+                return [...prev].sort((a, b) => a.wins - b.wins);
+            })
+        }
+    }
     return (
         <div>
-            <table className="min-w-full border border-gray-300 rounded-lg overflow-hidden">
+            <table
+                className="min-w-full border border-gray-300 rounded-lg overflow-hidden border border-black border-collapse">
                 <thead className="bg-gray-100">
                 <tr>
                     <th className={TABLE_TH}>ID</th>
                     <th className={TABLE_TH}>Car</th>
                     <th className={TABLE_TH}>Name</th>
-                    <th className={TABLE_TH}>Time (s)</th>
-                    <th className={TABLE_TH}>Wins</th>
+                    <th onClick={() => SortBy(SortEnum.TIME)} className={TABLE_TH}>
+                        Time (s)
+                        <span className="ml-4">⇅</span>
+                    </th>
+                    <th onClick={() => SortBy(SortEnum.WINE)} className={TABLE_TH}>
+                        Wins
+                        <span className="ml-4">⇅</span>
+                    </th>
                 </tr>
                 </thead>
                 <tbody>
