@@ -19,6 +19,7 @@ import {useEffect, useRef} from "react";
 import type {WinnerModel} from "../../../interface/winner-interface.ts";
 import {setWinners, updateWinners} from "../../../services/WinnersService.ts";
 import {hideWinnerModal, showWinnerModal} from "../../../store/WinnerModal.ts";
+import {ServerEnum} from "../../../enums/request-url.enum.ts";
 
 export default function CarModal({carListRace}: racingState) {
 
@@ -26,7 +27,10 @@ export default function CarModal({carListRace}: racingState) {
     const selector = useSelector((state: RootState) => state.carRaceStartSlice);
     const winners = useSelector((state: RootState) => state.winnerSlice.winners);
     const carList = useSelector((state: RootState) => state.carSlice.car);
+    const raceBtnDisabled: boolean = true;
+    const stoppedCars = [];
     const timeOutRef = useRef<Set<number>>(new Set());
+    let firstIsWinner = 1;
 
     useEffect(() => {
         const carElement = carListRace.find(element =>
@@ -36,7 +40,7 @@ export default function CarModal({carListRace}: racingState) {
         if (carElement) {
             if (selector.mode === ButtonType.START) {
                 const elementIndex = carListRace.indexOf(carElement);
-                uniqueCarRacing(carElement, elementIndex);
+                startRace(carElement, elementIndex + 1);
             } else {
                 removeAllTimeouts();
                 stopRacing(carElement);
@@ -58,18 +62,12 @@ export default function CarModal({carListRace}: racingState) {
 
     const racingMode = (mode: string) => {
         if (mode === ButtonType.RACE) {
-            const racePromises = carListRace.map((el: HTMLElement) => {
+
+            carListRace.forEach((el: HTMLElement) => {
                     const id = Number(el.dataset.id);
-                    return startRace(el, id)
+                    startRace(el, id)
                 }
             );
-            Promise.all(racePromises).then((results) => {
-                const validResults = results.filter(result => result !== null);
-                if (validResults.length > 0) {
-                    const winner = validResults.sort((a, b) => a.time - b.time)[0];
-                    handleWinnerFetch(winner);
-                }
-            });
         } else {
             removeAllTimeouts()
             carListRace.forEach((el: HTMLElement) => {
@@ -85,61 +83,54 @@ export default function CarModal({carListRace}: racingState) {
         timeOutRef.current.clear()
     }
 
-    const startRace = (el: HTMLElement, index: number): Promise<WinnerModel | null> => {
-        return new Promise((resolve) => {
-            const randomDuration = +(Math.random() * (MAX_DURATION - MIN_DURATION) + MIN_DURATION);
-            if (el) {
-                const carElement = el.querySelector(".race-car") as HTMLElement;
-                if (carElement) {
-                    carElement.style.position = "absolute";
-                    carElement.style.animation = `moveRight ${randomDuration}s linear forwards`;
-                    const handleAnimationEnd = () => {
-                        carElement.removeEventListener('animationend', handleAnimationEnd);
-                        resolve({
-                            id: index,
-                            time: randomDuration,
-                            wins: 1
-                        });
-                    };
+    const startRace = (el: HTMLElement, id: number) => {
+        fetch(`${ServerEnum.URL}/engine?id=${id}&status=started`, {method: "PATCH"})
+            .then(async (res) => {
+                if (!res.ok) throw new Error("Failed to start engine");
+                return res.json();
+            })
+            .then((startedData) => {
+                const velocityTime = Math.round(startedData.distance / startedData.velocity);
+                const durationSeconds = velocityTime / 1000;
+                return {durationSeconds}
+            }).then(({durationSeconds}) => {
+            let isWinnerBroken = true;
+            fetch(`${ServerEnum.URL}/engine?id=${id}&status=drive`, {method: "PATCH"})
+                .then((driveRes) => {
+                    if (!driveRes.ok && driveRes.status === 500) {
+                        isWinnerBroken = false;
+                        stopRacingOnTheWay(el, id);
+                    }
+                });
+            return {durationSeconds, isWinnerBroken}
+        }).then(({durationSeconds, isWinnerBroken}) => {
+            const carElement = el.querySelector(".race-car") as HTMLElement;
 
-                    carElement.addEventListener('animationend', handleAnimationEnd);
-
-                    const timeout = setTimeout(() => {
-                        carElement.removeEventListener('animationend', handleAnimationEnd);
-                        resolve({
-                            id: index,
-                            time: randomDuration,
-                            wins: 1
-                        });
-                    }, randomDuration * MAX_TIME + 100);
-                    timeOutRef.current.add(timeout)
+            carElement.style.position = "absolute";
+            carElement.style.animation = `moveRight ${durationSeconds}s linear forwards`;
+            const handleAnimationEnd = () => {
+                carElement.removeEventListener("animationend", handleAnimationEnd);
+                if (firstIsWinner === 1 && isWinnerBroken) {
+                    console.log('winner time ', durationSeconds);
+                    handleWinnerFetch({
+                        id: id,
+                        time: durationSeconds,
+                        wins: 1,
+                    });
+                } else {
+                    fetch(`${ServerEnum.URL}/engine?id=${id}&status=stopped`, {method: "PATCH"})
                 }
-            } else {
-                resolve(null);
-            }
-        });
-    }
+                firstIsWinner++;
+            };
+            carElement.addEventListener("animationend", handleAnimationEnd);
+        })
+    };
 
-    const uniqueCarRacing = (el: HTMLElement, index: number) => {
-        const randomDuration = +(Math.random() * (MAX_DURATION - MIN_DURATION) + MIN_DURATION);
 
+    const stopRacingOnTheWay = (el: HTMLElement, id: number) => {
         if (el) {
-            (el.querySelector(".race-car") as HTMLElement).style.position = "absolute";
-            (el.querySelector(".race-car") as HTMLElement).style.animation = `moveRight ${randomDuration}s linear forwards`;
-
-
-            const raceResult: WinnerModel = {
-                id: index + 1,
-                time: randomDuration,
-                wins: 1
-            }
-
-            const timeout = setTimeout(() => {
-                if (randomDuration) {
-                    handleWinnerFetch(raceResult)
-                }
-            }, randomDuration * MAX_TIME)
-            timeOutRef.current.add(timeout)
+            (el.querySelector(".race-car") as HTMLElement).style.animationPlayState = 'paused';
+            fetch(`${ServerEnum.URL}/engine?id=${id}&status=stopped`, {method: "PATCH"})
         }
     }
 
@@ -154,7 +145,8 @@ export default function CarModal({carListRace}: racingState) {
                 time: winner.time
             })).then((response) => {
                 openWinnerPopup(response.payload)
-            });
+                console.log('response', response)
+            })
         } else {
             dispatch(setWinners({
                 id: winner.id,
@@ -195,6 +187,7 @@ export default function CarModal({carListRace}: racingState) {
     return <div className="border-b border-solid pb-[30px] flex justify-between">
         <div className="flex gap-2.5">
             <Button className={ButtonStyleEnum.CREATE_BUTTON}
+
                     onClick={() => racingMode(ButtonType.RACE)}
                     value={ButtonType.RACE}/>
 
