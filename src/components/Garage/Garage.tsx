@@ -1,20 +1,15 @@
 import CarModal from "./car-race-panel/CarModal.tsx";
 import CarPanel from "./car-race-panel/CarPanel.tsx";
-import {useDispatch, useSelector} from "react-redux";
-import type {AppDispatch, RootState} from "../../store/store.ts";
-import {useEffect, useState} from "react";
+import {useSelector} from "react-redux";
+import type {RootState} from "../../store/store.ts";
+import {useState} from "react";
 import Modal from "../../UI/Modal.tsx";
-import {getWinners} from "../../services/WinnersService.ts";
 import WinnerModal from "../../UI/WinnerModal.tsx";
 
 export default function Garage() {
-    const dispatch = useDispatch<AppDispatch>();
     const [carListRace, setCarListRace] = useState<HTMLDivElement[]>([])
     const selector = useSelector((state: RootState) => state.carSlice.car);
 
-    useEffect(() => {
-        dispatch(getWinners())
-    }, [dispatch]);
     const carListForRacing = (carList: HTMLDivElement[]) => {
         if (carList.length) {
             setCarListRace(carList);

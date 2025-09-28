@@ -6,9 +6,7 @@ import {ButtonStyleEnum} from "../../../enums/style-enum.ts";
 import {ButtonType} from "../../../enums/button-type.ts";
 import {
     CAR_LIST,
-    MAX_DURATION,
-    MAX_TIME, MAX_TIME_HIDDEN,
-    MIN_DURATION,
+    MAX_TIME_HIDDEN,
     PAGE_END,
     PAGE_START,
     START
@@ -20,6 +18,8 @@ import type {WinnerModel} from "../../../interface/winner-interface.ts";
 import {setWinners, updateWinners} from "../../../services/WinnersService.ts";
 import {hideWinnerModal, showWinnerModal} from "../../../store/WinnerModal.ts";
 import {ServerEnum} from "../../../enums/request-url.enum.ts";
+import {EngineService} from "../../../services/EngineService.ts";
+import {ErrorMessageEnum} from "../../../enums/error-message.enum.ts";
 
 export default function CarModal({carListRace}: racingState) {
 
@@ -28,7 +28,7 @@ export default function CarModal({carListRace}: racingState) {
     const winners = useSelector((state: RootState) => state.winnerSlice.winners);
     const carList = useSelector((state: RootState) => state.carSlice.car);
     const raceBtnDisabled: boolean = true;
-    const stoppedCars = [];
+
     const timeOutRef = useRef<Set<number>>(new Set());
     let firstIsWinner = 1;
 
@@ -62,7 +62,6 @@ export default function CarModal({carListRace}: racingState) {
 
     const racingMode = (mode: string) => {
         if (mode === ButtonType.RACE) {
-
             carListRace.forEach((el: HTMLElement) => {
                     const id = Number(el.dataset.id);
                     startRace(el, id)
@@ -86,7 +85,7 @@ export default function CarModal({carListRace}: racingState) {
     const startRace = (el: HTMLElement, id: number) => {
         fetch(`${ServerEnum.URL}/engine?id=${id}&status=started`, {method: "PATCH"})
             .then(async (res) => {
-                if (!res.ok) throw new Error("Failed to start engine");
+                if (!res.ok) throw new Error(ErrorMessageEnum.FAILED_ENGINE);
                 return res.json();
             })
             .then((startedData) => {
@@ -99,7 +98,8 @@ export default function CarModal({carListRace}: racingState) {
                 .then((driveRes) => {
                     if (!driveRes.ok && driveRes.status === 500) {
                         isWinnerBroken = false;
-                        stopRacingOnTheWay(el, id);
+                        stopRacingOnTheWay(el);
+                        dispatch(EngineService(id))
                     }
                 });
             return {durationSeconds, isWinnerBroken}
@@ -111,14 +111,13 @@ export default function CarModal({carListRace}: racingState) {
             const handleAnimationEnd = () => {
                 carElement.removeEventListener("animationend", handleAnimationEnd);
                 if (firstIsWinner === 1 && isWinnerBroken) {
-                    console.log('winner time ', durationSeconds);
                     handleWinnerFetch({
                         id: id,
                         time: durationSeconds,
                         wins: 1,
                     });
                 } else {
-                    fetch(`${ServerEnum.URL}/engine?id=${id}&status=stopped`, {method: "PATCH"})
+                    dispatch(EngineService(id))
                 }
                 firstIsWinner++;
             };
@@ -126,18 +125,14 @@ export default function CarModal({carListRace}: racingState) {
         })
     };
 
-
-    const stopRacingOnTheWay = (el: HTMLElement, id: number) => {
+    const stopRacingOnTheWay = (el: HTMLElement) => {
         if (el) {
             (el.querySelector(".race-car") as HTMLElement).style.animationPlayState = 'paused';
-            fetch(`${ServerEnum.URL}/engine?id=${id}&status=stopped`, {method: "PATCH"})
         }
     }
 
     const handleWinnerFetch = (winner: WinnerModel) => {
-
         const existingWinner = winners.find(winnerCar => winnerCar.id === winner.id);
-
         if (existingWinner) {
             dispatch(updateWinners({
                 ...existingWinner,
@@ -145,7 +140,6 @@ export default function CarModal({carListRace}: racingState) {
                 time: winner.time
             })).then((response) => {
                 openWinnerPopup(response.payload)
-                console.log('response', response)
             })
         } else {
             dispatch(setWinners({
@@ -172,7 +166,6 @@ export default function CarModal({carListRace}: racingState) {
         }, MAX_TIME_HIDDEN)
 
         timeOutRef.current.add(timeout)
-
     }
     const stopRacing = (el: HTMLElement) => {
         if (el) {

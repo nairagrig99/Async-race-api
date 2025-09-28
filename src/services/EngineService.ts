@@ -1,13 +1,13 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
+import {ServerEnum} from "../enums/request-url.enum.ts";
+import {ErrorMessageEnum} from "../enums/error-message.enum.ts";
 
 
-export const EngineService = createAsyncThunk('engine/fetch', async (id: number, {rejectWithValue}) => {
+export const EngineService = createAsyncThunk('engine/fetch', async (id: number) => {
 
-    try {
+    const response = await fetch(`${ServerEnum.URL}/engine?id=${id}&status=stopped`, {method: "PATCH"})
 
-    } catch (err) {
+    if (!response.ok) throw new Error(ErrorMessageEnum.SERVER_RESPONSE);
 
-        return rejectWithValue(err)
-    }
-
+    return response.json();
 })

@@ -1,5 +1,5 @@
-export const TABLE_TH="px-4 py-2 border-b text-left";
-export const TABLE_TD="px-4 py-2 border-b";
+export const TABLE_TH="px-4 py-2 text-left hover:bg-blue-700 cursor-pointer border border-black px-4 py-2";
+export const TABLE_TD="px-4 py-2 border border-black px-4 py-2";
 export const DEFAULT_COLOR = '#000000';
 export const FORM_INITIAL_STATE = {
     name: '',
