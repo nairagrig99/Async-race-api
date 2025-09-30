@@ -4,8 +4,6 @@ import carSlice from "./CarSlice.ts";
 import carRaceStartSlice from "./UniqCarRaceStart.ts";
 import winnerSlice from "./WinnerSlice.ts";
 import winnerModalSlice from "./WinnerModal.ts";
-
-
 export const store = configureStore({
     reducer: {
         modalSlice: modalSlice.reducer,

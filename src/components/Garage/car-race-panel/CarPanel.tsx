@@ -1,12 +1,12 @@
 import CarSvg from "../../../UI/CarSvg.tsx";
-import {useSelector} from "react-redux";
-import type {RootState} from "../../../store/store.ts";
+import {useDispatch, useSelector} from "react-redux";
+import type {AppDispatch, RootState} from "../../../store/store.ts";
 import CarControlEvents from "./CarControlEvents.tsx";
-import {useEffect, useRef, useState} from "react";
-import type {CarModelInterface} from "../../../interface/car-model.interface.ts";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {Pagination} from "../../../enums/pagination.ts";
 import PaginationPanel from "./PaginationPanel.tsx";
 import {PAGE_LIMIT, PAGE_START} from "../../../enums/global-variables.ts";
+import {resetEngineState} from "../../../store/EngineState.ts";
 
 type racingState = {
     racingPanel: (paginatedCar: HTMLDivElement[]) => void
@@ -15,9 +15,9 @@ type racingState = {
 export default function CarPanel({racingPanel}: racingState) {
     const carsRef = useRef<HTMLDivElement[]>([]);
     const getCarList = useSelector((state: RootState) => state.carSlice.car);
-    const [carList, setCarList] = useState<CarModelInterface[]>([]);
     const [page, setPage] = useState<number>(PAGE_START);
     const garageLength: number = getCarList.length;
+    const dispatch = useDispatch<AppDispatch>()
 
     const pagination = (direction: string) => {
         if (direction === Pagination.NEXT && page * PAGE_LIMIT < getCarList.length) {
@@ -28,13 +28,27 @@ export default function CarPanel({racingPanel}: racingState) {
     }
 
     useEffect(() => {
+        dispatch(resetEngineState())
+    }, [page]);
+
+    const carList = useMemo(() => {
         const start = (page - PAGE_START) * PAGE_LIMIT;
         const end = start + PAGE_LIMIT;
-        const paginatedCarList = getCarList.slice(start, end)
-        setCarList(paginatedCarList);
+
+        if (end > garageLength) {
+            return getCarList.slice(start, garageLength);
+        } else {
+            return getCarList.slice(start, end);
+        }
+
     }, [getCarList, page]);
 
     useEffect(() => {
+        // const carIds = new Set(carList.map(car => car.id));
+        // const findPaginatedElements = carsRef.current.filter(
+        //     ref => carIds.has(+ref.dataset.id)
+        // );
+        // racingPanel(findPaginatedElements);
         racingPanel(carsRef.current);
     }, [carList]);
 

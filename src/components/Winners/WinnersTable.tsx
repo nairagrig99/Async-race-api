@@ -22,15 +22,17 @@ export default function WinnersTable() {
     useEffect(() => {
         if (carList.length && selectWinners.length) {
             const updateWinnersList = selectWinners.map((el) => {
-                const carColor = carList[el.id]?.color;
-                const carName = carList[el.id]?.name;
+                const findWinner = carList.find((carEl) => carEl.id === el.id)
+
                 return {
                     ...el,
-                    color: carColor,
-                    name: carName
+                    color: findWinner?.color,
+                    name: findWinner?.name
                 }
+
             });
             setWinners(updateWinnersList);
+
         }
     }, [selectWinners, carList]);
 
