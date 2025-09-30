@@ -23,16 +23,13 @@ export default function WinnersTable() {
         if (carList.length && selectWinners.length) {
             const updateWinnersList = selectWinners.map((el) => {
                 const findWinner = carList.find((carEl) => carEl.id === el.id)
-
                 return {
                     ...el,
                     color: findWinner?.color,
                     name: findWinner?.name
                 }
-
             });
-            setWinners(updateWinnersList);
-
+            setWinners(updateWinnersList as WinnerWithCar[]);
         }
     }, [selectWinners, carList]);
 
