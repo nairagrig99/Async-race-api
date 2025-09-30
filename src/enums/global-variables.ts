@@ -16,47 +16,14 @@ export const MAX_DURATION = 10;
 export const MAX_TIME = 1000;
 export const MAX_TIME_HIDDEN = 3000;
 
+export const RGB_COLOR=16777215;
 
-export const CAR_LIST = [
-    {
-        name: "Tesla",
-        color: "#e6e6fa",
-    },
-    {
-        name: "BMW",
-        color: "#4e4d46",
-    },
-    {
-        name: "Mersedes",
-        color: "#6c779f",
-    },
-    {
-        name: "Ford",
-        color: "#b6a767",
+export const CAR_BRANDS = [
+    "Tesla", "BMW", "Mercedes", "Ford", "Audi",
+    "Lamborghini", "Toyota", "Honda", "Volkswagen", "Hyundai"
+];
 
-    }, {
-        name: "Audi",
-        color: "#ef3c40",
-
-    }, {
-        name: "Lamborghini",
-        color: "#1e2e6c",
-
-    }, {
-        name: "Toyota",
-        color: "#ef3c40",
-
-    }, {
-        name: "Honda ",
-        color: "#ef9c40",
-
-    }, {
-        name: "Volkswagen",
-        color: "#422324",
-
-    }, {
-        name: "Hyundai Tucson",
-        color: "#30a150",
-
-    }
-]
+export const CAR_MODELS = [
+    "Model S", "Mustang", "Civic", "A4", "Camry",
+    "X5", "Corolla", "Huracan", "Passat", "Sonata"
+];

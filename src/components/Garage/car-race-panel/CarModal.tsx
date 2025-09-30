@@ -5,11 +5,10 @@ import type {AppDispatch, RootState} from "../../../store/store.ts";
 import {ButtonStyleEnum} from "../../../enums/style-enum.ts";
 import {ButtonType} from "../../../enums/button-type.ts";
 import {
-    CAR_LIST,
-    MAX_TIME_HIDDEN,
-    PAGE_END,
-    PAGE_START,
-    START
+    CAR_BRANDS,
+    CAR_MODELS,
+    MAX_TIME_HIDDEN, PAGE_END,
+    RGB_COLOR,
 } from "../../../enums/global-variables.ts";
 import {createCar} from "../../../services/GarageService.ts";
 import type {racingState} from "../../../interface/racing-state.ts";
@@ -20,27 +19,34 @@ import {hideWinnerModal, showWinnerModal} from "../../../store/WinnerModal.ts";
 import {ServerEnum} from "../../../enums/request-url.enum.ts";
 import {EngineService} from "../../../services/EngineService.ts";
 import {ErrorMessageEnum} from "../../../enums/error-message.enum.ts";
+import {resetEngineState, startCar, startRaceMode, stopCar, stopRace} from "../../../store/EngineState.ts";
 
 export default function CarModal({carListRace}: racingState) {
-
     const dispatch = useDispatch<AppDispatch>();
     const selector = useSelector((state: RootState) => state.carRaceStartSlice);
     const winners = useSelector((state: RootState) => state.winnerSlice.winners);
+    const engineState = useSelector((state: RootState) => state.engineStateSlice);
     const carList = useSelector((state: RootState) => state.carSlice.car);
-    const raceBtnDisabled: boolean = true;
-
     const timeOutRef = useRef<Set<number>>(new Set());
     let firstIsWinner = 1;
+
+    useEffect(() => {
+        return () => {
+            dispatch(resetEngineState());
+        }
+    }, []);
 
     useEffect(() => {
         const carElement = carListRace.find(element =>
             element && element.dataset.id === selector.id.toString()
         );
 
-        if (carElement) {
+        if (carElement && carElement.dataset.id) {
             if (selector.mode === ButtonType.START) {
-                const elementIndex = carListRace.indexOf(carElement);
-                startRace(carElement, elementIndex + 1);
+                const elementIndex = +carElement.dataset.id;
+                startRace(carElement, elementIndex, false);
+                dispatch(stopCar(false))
+                dispatch(stopRace(false))
             } else {
                 removeAllTimeouts();
                 stopRacing(carElement);
@@ -48,22 +54,33 @@ export default function CarModal({carListRace}: racingState) {
         }
     }, [selector.id, selector.mode]);
 
+    const getRandomColor = () => "#" + Math.floor(Math.random() * RGB_COLOR).toString(16).padStart(6, "0")
+
     const createRandomCars = () => {
         const carList = [];
-        for (let i = START; i < PAGE_END; i++) {
-            const randomIndex = Math.floor(Math.random() * CAR_LIST.length - PAGE_START) + PAGE_START;
-            carList.push(CAR_LIST[randomIndex]);
+
+        for (let i = 0; i < PAGE_END; i++) {
+            const brand = CAR_BRANDS[Math.floor(Math.random() * CAR_BRANDS.length)];
+            const model = CAR_MODELS[Math.floor(Math.random() * CAR_MODELS.length)];
+
+            carList.push({
+                name: `${brand} ${model}`,
+                color: getRandomColor()
+            });
         }
 
         carList.forEach(car => {
             dispatch(createCar({form: car}));
         });
     }
-
     const racingMode = (mode: string) => {
         if (mode === ButtonType.RACE) {
             carListRace.forEach((el: HTMLElement) => {
                     const id = Number(el.dataset.id);
+                    dispatch(startCar(true))
+                    dispatch(stopRace(true))
+                    dispatch(stopCar(false))
+                    dispatch(startRaceMode(true))
                     startRace(el, id)
                 }
             );
@@ -72,6 +89,10 @@ export default function CarModal({carListRace}: racingState) {
             carListRace.forEach((el: HTMLElement) => {
                 stopRacing(el);
             });
+            dispatch(stopRace(true))
+            dispatch(startCar(false))
+            dispatch(stopCar(true))
+            dispatch(startRaceMode(false))
         }
     }
 
@@ -82,7 +103,8 @@ export default function CarModal({carListRace}: racingState) {
         timeOutRef.current.clear()
     }
 
-    const startRace = (el: HTMLElement, id: number) => {
+    const startRace = (el: HTMLElement, id: number, isIndividualCar: boolean = true) => {
+
         fetch(`${ServerEnum.URL}/engine?id=${id}&status=started`, {method: "PATCH"})
             .then(async (res) => {
                 if (!res.ok) throw new Error(ErrorMessageEnum.FAILED_ENGINE);
@@ -102,15 +124,16 @@ export default function CarModal({carListRace}: racingState) {
                         dispatch(EngineService(id))
                     }
                 });
+
             return {durationSeconds, isWinnerBroken}
         }).then(({durationSeconds, isWinnerBroken}) => {
             const carElement = el.querySelector(".race-car") as HTMLElement;
-
             carElement.style.position = "absolute";
             carElement.style.animation = `moveRight ${durationSeconds}s linear forwards`;
             const handleAnimationEnd = () => {
                 carElement.removeEventListener("animationend", handleAnimationEnd);
-                if (firstIsWinner === 1 && isWinnerBroken) {
+
+                if (firstIsWinner === 1 && isWinnerBroken && isIndividualCar) {
                     handleWinnerFetch({
                         id: id,
                         time: durationSeconds,
@@ -159,6 +182,8 @@ export default function CarModal({carListRace}: racingState) {
                 name: findWinner.name
             }
             dispatch(showWinnerModal(winner))
+            dispatch(stopCar(false))
+            dispatch(stopRace(false))
         }
 
         const timeout = setTimeout(() => {
@@ -179,14 +204,17 @@ export default function CarModal({carListRace}: racingState) {
 
     return <div className="border-b border-solid pb-[30px] flex justify-between">
         <div className="flex gap-2.5">
-            <Button className={ButtonStyleEnum.CREATE_BUTTON}
+            <Button
+                className={ButtonStyleEnum.CREATE_BUTTON + ' ' + (engineState.start_race ? ButtonStyleEnum.BUTTON_DISABLED : '')}
+                disabled={engineState.start_race}
+                onClick={() => racingMode(ButtonType.RACE)}
+                value={ButtonType.RACE}/>
 
-                    onClick={() => racingMode(ButtonType.RACE)}
-                    value={ButtonType.RACE}/>
-
-            <Button className={ButtonStyleEnum.CANCEL_BUTTON}
-                    onClick={() => racingMode(ButtonType.RESET)}
-                    value={ButtonType.RESET}/>
+            <Button
+                className={ButtonStyleEnum.CANCEL_BUTTON + ' ' + (engineState.stop_race ? ButtonStyleEnum.BUTTON_DISABLED : '')}
+                onClick={() => racingMode(ButtonType.RESET)}
+                disabled={engineState.stop_race}
+                value={ButtonType.RESET}/>
         </div>
 
         <Button className={ButtonStyleEnum.CREATE_BUTTON}

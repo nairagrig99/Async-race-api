@@ -1,16 +1,11 @@
 import WinnersTable from "./WinnersTable.tsx";
-import {useEffect} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import type {AppDispatch, RootState} from "../../store/store.ts";
-import {getWinners} from "../../services/WinnersService.ts";
+import {useSelector} from "react-redux";
+import type {RootState} from "../../store/store.ts";
+
 
 export default function Winners() {
-    const dispatch = useDispatch<AppDispatch>();
-    const selector = useSelector((state:RootState)=>state.winnerSlice.winners);
+    const selector = useSelector((state: RootState) => state.winnerSlice.winners);
 
-    useEffect(() => {
-        dispatch(getWinners())
-    }, [dispatch])
 
     if (!selector.length) return <h3 className="text-[45px] text-center">No Winners</h3>
 
