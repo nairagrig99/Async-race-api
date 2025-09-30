@@ -4,13 +4,16 @@ import carSlice from "./CarSlice.ts";
 import carRaceStartSlice from "./UniqCarRaceStart.ts";
 import winnerSlice from "./WinnerSlice.ts";
 import winnerModalSlice from "./WinnerModal.ts";
+import engineStateSlice from "./EngineState.ts";
+
 export const store = configureStore({
     reducer: {
         modalSlice: modalSlice.reducer,
         carSlice: carSlice.reducer,
         carRaceStartSlice: carRaceStartSlice.reducer,
         winnerSlice:winnerSlice.reducer,
-        winnerModalSlice:winnerModalSlice.reducer
+        winnerModalSlice:winnerModalSlice.reducer,
+        engineStateSlice:engineStateSlice.reducer
     }
 })
 export type RootState = ReturnType<typeof store.getState>;
