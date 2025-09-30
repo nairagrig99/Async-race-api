@@ -202,7 +202,7 @@ export default function CarModal({carListRace}: racingState) {
         }
     }
 
-    return <div className="border-b border-solid pb-[30px] flex justify-between">
+    return <div className="border-b border-solid pb-[30px] flex-wrap gap-2.5 flex justify-between">
         <div className="flex gap-2.5">
             <Button
                 className={ButtonStyleEnum.CREATE_BUTTON + ' ' + (engineState.start_race ? ButtonStyleEnum.BUTTON_DISABLED : '')}
