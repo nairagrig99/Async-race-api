@@ -9,8 +9,6 @@ import {removeCar} from "../../../services/GarageService.ts";
 import {startCarRacing, stopCarRacing} from "../../../store/UniqCarRaceStart.ts";
 import {startRaceMode, stopCar, stopRace} from "../../../store/EngineState.ts";
 import {useState} from "react";
-
-
 export default function CarControlEvents({car}: { car: CarModelInterface }) {
     const dispatch = useDispatch<AppDispatch>()
     const selector = useSelector((state: RootState) => state.engineStateSlice)
@@ -28,6 +26,7 @@ export default function CarControlEvents({car}: { car: CarModelInterface }) {
             dispatch(startCarRacing(car.id))
             dispatch(stopCar(false))
             dispatch(startRaceMode(true))
+            dispatch(stopRace(true))
             setStopState(false)
         }
     }
@@ -52,9 +51,9 @@ export default function CarControlEvents({car}: { car: CarModelInterface }) {
         </div>
 
         <div className="flex flex-col">
-            <Button disabled={selector.start }
+            <Button disabled={selector.start || !stopState}
                     onClick={startRacing}
-                    className={ButtonStyleEnum.START_BUTTON + ' ' + (selector.start ? ButtonStyleEnum.BUTTON_DISABLED : '')}
+                    className={ButtonStyleEnum.START_BUTTON + ' ' + (selector.start || !stopState ? ButtonStyleEnum.BUTTON_DISABLED : '')}
                     value={ButtonType.START}/>
             <Button onClick={stopRacing}
                     disabled={stopState || selector.stop }
