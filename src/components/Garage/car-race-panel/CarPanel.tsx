@@ -7,17 +7,23 @@ import {Pagination} from "../../../enums/pagination.ts";
 import PaginationPanel from "./PaginationPanel.tsx";
 import {PAGE_LIMIT, PAGE_START} from "../../../enums/global-variables.ts";
 import {resetEngineState} from "../../../store/EngineState.ts";
+import {pageState} from "../../../store/PageState.ts";
 
 type racingState = {
     racingPanel: (paginatedCar: HTMLDivElement[]) => void
 }
-
 export default function CarPanel({racingPanel}: racingState) {
     const carsRef = useRef<HTMLDivElement[]>([]);
     const getCarList = useSelector((state: RootState) => state.carSlice.car);
-    const [page, setPage] = useState<number>(PAGE_START);
+    const savedPage = useSelector((state: RootState) => state.pageStateSlice.page);
+    const [page, setPage] = useState<number>(savedPage || PAGE_START);
     const garageLength: number = getCarList.length;
     const dispatch = useDispatch<AppDispatch>()
+
+    useEffect(() => {
+        dispatch(resetEngineState())
+        dispatch(pageState(page));
+    }, [page,dispatch]);
 
     const pagination = (direction: string) => {
         if (direction === Pagination.NEXT && page * PAGE_LIMIT < getCarList.length) {
@@ -26,10 +32,6 @@ export default function CarPanel({racingPanel}: racingState) {
             setPage(prevState => prevState - PAGE_START);
         }
     }
-
-    useEffect(() => {
-        dispatch(resetEngineState())
-    }, [page]);
 
     const carList = useMemo(() => {
         const start = (page - PAGE_START) * PAGE_LIMIT;
@@ -44,11 +46,6 @@ export default function CarPanel({racingPanel}: racingState) {
     }, [getCarList, page]);
 
     useEffect(() => {
-        // const carIds = new Set(carList.map(car => car.id));
-        // const findPaginatedElements = carsRef.current.filter(
-        //     ref => carIds.has(+ref.dataset.id)
-        // );
-        // racingPanel(findPaginatedElements);
         racingPanel(carsRef.current);
     }, [carList]);
 
@@ -57,7 +54,7 @@ export default function CarPanel({racingPanel}: racingState) {
             <div>
                 {carList.length > 0 &&
                     carList.map((car) =>
-                        <div key={car.id} className="w-[166px]">
+                        <div key={car.id} className="w-[200px]">
                             <div className="flex gap-2 items-center ">
                                 <CarControlEvents car={car}/>
                                 <div

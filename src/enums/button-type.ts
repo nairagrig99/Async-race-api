@@ -6,6 +6,6 @@ export enum ButtonType {
     EDIT = "EDIT",
     DELETE = "DELETE",
     CANCEL = "CANCEL",
-    START = "A",
-    STOP = "B",
+    START = "START",
+    STOP = "STOP",
 }

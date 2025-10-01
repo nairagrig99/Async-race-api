@@ -31,6 +31,9 @@ export default function CarModal({carListRace}: racingState) {
     let firstIsWinner = 1;
 
     useEffect(() => {
+    }, [engineState]);
+
+    useEffect(() => {
         return () => {
             dispatch(resetEngineState());
         }
@@ -215,6 +218,7 @@ export default function CarModal({carListRace}: racingState) {
                 onClick={() => racingMode(ButtonType.RESET)}
                 disabled={engineState.stop_race}
                 value={ButtonType.RESET}/>
+
         </div>
 
         <Button className={ButtonStyleEnum.CREATE_BUTTON}
